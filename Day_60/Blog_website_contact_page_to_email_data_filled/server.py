@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import requests
 from smtplib import SMTP
 from dotenv import load_dotenv
@@ -68,7 +68,7 @@ def receive_data():
         connection.login(user=emailID, password=password)
         connection.sendmail(from_addr=emailID, to_addrs=emailID,
                             msg=f'''Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phoneNo}\nMessage: {message}''')
-    return render_template("contact.html")
+    return redirect("/")
 
 
 if __name__ == "__main__":
