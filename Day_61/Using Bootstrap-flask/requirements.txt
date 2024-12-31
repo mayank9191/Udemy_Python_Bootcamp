@@ -1,0 +1,4 @@
+Bootstrap_Flask
+WTForms==3.0.1
+Flask_WTF==1.2.1
+

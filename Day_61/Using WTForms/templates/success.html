@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% extends "base.html" %} {% block title %}Success{% endblock%} {% block
+    styling%} {{super()}} h1{ color:green } {% endblock %}
+  </head>
+  <body>
+    {% block content%}
+    <div class="container">
+      <h1>Top Secret</h1>
+      <iframe
+        src="https://giphy.com/embed/Ju7l5y9osyymQ"
+        width="480"
+        height="360"
+        frameborder="0"
+        class="giphy-embed"
+        allowfullscreen
+      ></iframe>
+      <p>
+        <a href="https://giphy.com/gifs/rick-astley-Ju7l5y9osyymQ">via GIPHY</a>
+      </p>
+    </div>
+    {% endblock%}
+  </body>
+</html>
