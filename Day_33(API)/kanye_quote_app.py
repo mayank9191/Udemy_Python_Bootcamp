@@ -17,7 +17,7 @@ window.configure(padx=50, pady=50)
 
 # Canvas
 
-background_image = PhotoImage(file="Day_33/background.png")
+background_image = PhotoImage(file="Day_33(API)/background.png")
 canvas = Canvas(width=300, height=414)
 canvas.create_image(150, 207, image=background_image)
 quote_text = canvas.create_text(
@@ -26,7 +26,7 @@ canvas.grid(column=0, row=0)
 
 # Button
 
-kanye_img = PhotoImage(file="Day_33/kanye.png")
+kanye_img = PhotoImage(file="Day_33(API)/kanye.png")
 kanye_button = Button(
     image=kanye_img, command=change_quote)
 kanye_button.grid(column=0, row=1)

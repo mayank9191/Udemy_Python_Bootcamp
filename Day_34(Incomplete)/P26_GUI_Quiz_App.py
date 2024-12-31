@@ -56,11 +56,11 @@ canvas.grid(column=0, row=1, columnspan=2, pady=50)
 
 # Button
 
-right_img = PhotoImage(file="Day_34/images/true.png")
+right_img = PhotoImage(file="Day_34(Incomplete)/images/true.png")
 true_button = Button(image=right_img, command=lambda: check("True"))
 true_button.grid(column=0, row=2, pady=20)
 
-wrong_img = PhotoImage(file="Day_34/images/false.png")
+wrong_img = PhotoImage(file="Day_34(Incomplete)/images/false.png")
 false_button = Button(image=wrong_img, command=lambda: check("False"))
 false_button.grid(column=1, row=2, pady=20)
 

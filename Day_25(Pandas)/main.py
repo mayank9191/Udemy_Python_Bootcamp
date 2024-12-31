@@ -17,7 +17,7 @@
 import turtle as t
 import pandas
 
-data = pandas.read_csv("Day_25\weather_data.csv")
+data = pandas.read_csv("Day_25(Pandas)/weather_data.csv")
 # print(data)
 # print(data["temp"])
 # Whole table is considered as Dataframes data type

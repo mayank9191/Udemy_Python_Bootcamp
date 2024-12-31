@@ -5,10 +5,10 @@ n = 0
 
 screen = t.Screen()
 screen.setup(725, 491)
-screen.bgpic(r"Day_25\blank_states_img.gif")
+screen.bgpic(r"Day_25(Pandas)/blank_states_img.gif")
 
 
-data = pandas.read_csv("Day_25/50_states.csv")
+data = pandas.read_csv("Day_25(Pandas)/50_states.csv")
 dict_data = data.to_dict()
 
 pen = t.Turtle()
@@ -25,7 +25,7 @@ while len(guessed_states) < 50:
         not_guessed = [i for i in all_states if i not in guessed_states]
         print(not_guessed)
         states_to_learn = pandas.DataFrame(not_guessed)
-        states_to_learn.to_csv("Day_25/states_to_learn.csv")
+        states_to_learn.to_csv("Day_25(Pandas)/states_to_learn.csv")
         break
 
     for i in range(0, 50):

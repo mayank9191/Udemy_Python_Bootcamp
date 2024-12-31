@@ -1,6 +1,6 @@
 import pandas
 
-data = pandas.read_csv("Day_25\Squirrel_Data.csv")
+data = pandas.read_csv("Day_25(Pandas)\Squirrel_Data.csv")
 
 # gray_squirrel_count = len(data[data["Primary Fur Color"] == "Gray"])
 new_data = data["Primary Fur Color"].value_counts()
@@ -13,4 +13,4 @@ data_dict = {
 }
 data = pandas.DataFrame(data_dict)
 
-data.to_csv("Day_25\color_data.csv")
+data.to_csv("Day_25(Pandas)\color_data.csv")
