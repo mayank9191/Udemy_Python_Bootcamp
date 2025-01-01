@@ -1,8 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired, URL
 import csv
 
 '''
@@ -24,8 +24,23 @@ bootstrap = Bootstrap5(app)
 
 
 class CafeForm(FlaskForm):
-    cafe = StringField('Cafe name', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    cafe = StringField(label='Cafe Name', validators=[DataRequired()])
+    cafe_location = StringField(
+        label="Cafe Location on Google Map (URL)", validators=[DataRequired(), URL(require_tld=True)])
+    open_time = StringField(label="Opening Time e.g. 8AM",
+                            validators=[DataRequired()])
+    close_time = StringField(
+        label="Closing Time e.g. 5:30PM", validators=[DataRequired()])
+
+    coffee_rating = SelectField(label="Cofee Rating", choices=[(
+        "opt1", "☕"), ("opt2", "☕☕"), ("opt3", "☕☕☕"), ("opt4", "☕☕☕☕"), ("opt5", "☕☕☕☕☕")], validators=[DataRequired()])
+
+    wifi_rating = SelectField(
+        label="Wifi Strength Rating", choices=[("opt1", "✘"), ("opt2", "💪"), ("opt3", "💪💪"), ("opt4", "💪💪💪")], validators=[DataRequired()])
+    socket_rating = SelectField(label="Power Socket Availability", choices=[(
+        "opt1", "✘"), ("opt2", "🔌"), ("opt3", "🔌🔌"), ("opt4", "🔌🔌🔌")], validators=[DataRequired()])
+
+    submit = SubmitField(label='Submit')
 
 
 # Exercise:
@@ -43,14 +58,23 @@ def home():
     return render_template("index.html")
 
 
-@app.route('/add')
+@app.route('/add', methods=["GET", "POST"])
 def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
-        print("True")
-    # Exercise:
-    # Make the form write a new row into cafe-data.csv
-    # with   if form.validate_on_submit()
+        cafe = form.cafe.data
+        cafe_location = form.cafe_location.data
+        openT = form.open_time.data
+        closeT = form.close_time.data
+        cofeeR = form.coffee_rating.data
+        wifiR = form.coffee_rating.data
+        Socket = form.socket_rating.data
+        with open("Day_62/cafe-data.csv", "a") as f:
+            f.write(f'''{cafe},{cafe_location},{openT},{
+                closeT},{cofeeR},{wifiR},{Socket}\n''')
+        print("New cafe added successfully!")
+        return redirect("/add")
+
     return render_template('add.html', form=form)
 
 
