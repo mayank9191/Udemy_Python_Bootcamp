@@ -1,44 +1,57 @@
 {% extends 'base.html' %} {% from "bootstrap5/table.html" import render_table %}
-{% block title %}Restaurants{% endblock %} {% block content %}
+{% block title %}Restaurants{% endblock %}
+<body>
+  {% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1>All Cafes</h1>
 
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <h1>All Cafes</h1>
-
-      <table class="table table-dark table-striped table-hover">
-        <!-- This is where you will write the code to render a Bootstrap 
+        <table class="table table-dark table-striped table-hover">
+          <!-- This is where you will write the code to render a Bootstrap 
           Table that contains all the information from the 
           cafe-data.csv file. -->
-        <thead>
-          <tr>
-            <th scope="col">Cafe Name</th>
-            <th scope="col">Location</th>
-            <th scope="col">Open</th>
-            <th scope="col">Close</th>
-            <th scope="col">Coffee</th>
-            <th scope="col">Wifi</th>
-            <th scope="col">Power</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in cafes%}
-          <tr>
-            <td>{{item[0]}}</td>
-            <td><a href="{{item[1]}}">Maps Link</a></td>
-            <td>{{item[2]}}</td>
-            <td>{{item[3]}}</td>
-            <td>{{item[4]}}</td>
-            <td>{{item[5]}}</td>
-            <td>{{item[6]}}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <a href="{{url_for('add_cafe')}}">ADD</a>
-      <p><a href="{{url_for('home')}}">Return to index page</a></p>
+          <thead>
+            <tr>
+              <th scope="col">Cafe Name</th>
+              <th scope="col">Location (Google Maps)</th>
+              <th scope="col">Open</th>
+              <th scope="col">Close</th>
+              <th scope="col">Coffee</th>
+              <th scope="col">Wifi</th>
+              <th scope="col">Power</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cafes if item[0]!="Cafe Name" %}
+            <tr>
+              <td>{{item[0]}}</td>
+              <td><a href="{{item[1]}}" target="">Maps Link</a></td>
+              <td>{{item[2]}}</td>
+              <td>{{item[3]}}</td>
+              <td>{{item[4]}}</td>
+              <td>{{item[5]}}</td>
+              <td>{{item[6]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a
+          class="btn btn-warning btn-lg"
+          href="{{url_for('add_cafe')}}"
+          role="button"
+        >
+          <span
+            ><img
+              src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnVpNmRpbjJoZDNlcHR1ZWF6bGRzc2p5MnA2ZGJuc2hsY29xbWkxdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Kj8nGPCpAvrQcoC2At/giphy.webp "
+              alt="cat icon"
+              width="40" /></span
+          >&nbsp;<b>Add Cafe Here</b></a
+        >
+        <p><a href="{{url_for('home')}}">Return to index page</a></p>
+      </div>
     </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
+</body>

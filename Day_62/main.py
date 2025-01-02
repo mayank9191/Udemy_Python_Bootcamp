@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
-from wtforms.validators import DataRequired, URL
+from wtforms import StringField, SubmitField, SelectField, URLField
+from wtforms.validators import DataRequired, URL, Length
 import csv
 
 '''
@@ -25,20 +25,20 @@ bootstrap = Bootstrap5(app)
 
 class CafeForm(FlaskForm):
     cafe = StringField(label='Cafe Name', validators=[DataRequired()])
-    cafe_location = StringField(
-        label="Cafe Location on Google Map (URL)", validators=[DataRequired(), URL(require_tld=True)])
+    cafe_location = URLField(label="Cafe Location on Google Map (URL)", validators=[Length(
+        max=200), DataRequired(), URL(require_tld=True)])
     open_time = StringField(label="Opening Time e.g. 8AM",
                             validators=[DataRequired()])
     close_time = StringField(
         label="Closing Time e.g. 5:30PM", validators=[DataRequired()])
 
     coffee_rating = SelectField(label="Cofee Rating", choices=[(
-        "opt1", "☕"), ("opt2", "☕☕"), ("opt3", "☕☕☕"), ("opt4", "☕☕☕☕"), ("opt5", "☕☕☕☕☕")], validators=[DataRequired()])
+        "☕", "☕"), ("☕☕", "☕☕"), ("☕☕☕", "☕☕☕"), ("☕☕☕☕", "☕☕☕☕"), ("☕☕☕☕☕", "☕☕☕☕☕")], validators=[DataRequired()])
 
     wifi_rating = SelectField(
-        label="Wifi Strength Rating", choices=[("opt1", "✘"), ("opt2", "💪"), ("opt3", "💪💪"), ("opt4", "💪💪💪")], validators=[DataRequired()])
+        label="Wifi Strength Rating", choices=[("✘", "✘"), ("💪", "💪"), ("💪💪", "💪💪"), ("💪💪💪", "💪💪💪")], validators=[DataRequired()])
     socket_rating = SelectField(label="Power Socket Availability", choices=[(
-        "opt1", "✘"), ("opt2", "🔌"), ("opt3", "🔌🔌"), ("opt4", "🔌🔌🔌")], validators=[DataRequired()])
+        "✘", "✘"), ("🔌", "🔌"), ("🔌🔌", "🔌🔌"), ("🔌🔌🔌", "🔌🔌🔌")], validators=[DataRequired()])
 
     submit = SubmitField(label='Submit')
 
@@ -67,9 +67,9 @@ def add_cafe():
         openT = form.open_time.data
         closeT = form.close_time.data
         cofeeR = form.coffee_rating.data
-        wifiR = form.coffee_rating.data
+        wifiR = form.wifi_rating.data
         Socket = form.socket_rating.data
-        with open("Day_62/cafe-data.csv", "a") as f:
+        with open("Day_62/cafe-data.csv", "a", encoding="utf-8") as f:
             f.write(f'''{cafe},{cafe_location},{openT},{
                 closeT},{cofeeR},{wifiR},{Socket}\n''')
         print("New cafe added successfully!")
