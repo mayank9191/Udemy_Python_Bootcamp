@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
@@ -74,17 +74,28 @@ def receive_data():
 
 @app.route("/edit?id=<id>")
 def edit(id):
+    with app.app_context():
+        book_details = db.session.execute(
+            db.select(Book).where(Book.id == id)).scalar()
 
-    return render_template("edit.html", id=id)
+    title = book_details.title
+    rating = book_details.rating
+
+    return render_template("edit.html", id=id, title=title, rating=rating)
 
 
-@app.route("/editt")
-def update_db(new, id):
+@app.route("/edit/<id>", methods=["POST", "GET"])
+def update_db(id):
+    # Update Database
+    print(request.form["new_rating"])
     with app.app_context():
         book_to_edit = db.session.execute(
-            db.select(Book).where(Book.id == id)).scalar().all()
-        book_to_edit.rating = new
+            db.select(Book).where(Book.id == id)).scalar()
+
+        book_to_edit.rating = request.form["new_rating"]
         db.session.commit()
+
+    return redirect("/")
 
 
 if __name__ == "__main__":
