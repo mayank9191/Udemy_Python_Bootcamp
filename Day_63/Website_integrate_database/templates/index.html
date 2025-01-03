@@ -7,10 +7,17 @@
   <body>
     <h1>My Library</h1>
     <ul>
+      <!-- Library|length is used to get no of item in Library its check wheter list is empty or not -->
       {% if library|length == 0%}
       <li><p>Library is empty.</p></li>
       {% else %} {% for i in library:%}
-      <li><p>{{i["title"]}} - {{i["author"]}} - {{i["rating"]}}</p></li>
+      <li>
+        <span>
+          <p>{{i.title}} - {{i.author}} - {{i.rating}}/10</p>
+          <a href="{{url_for('edit',id=i.id)}}"> Edit Rating </a>
+        </span>
+      </li>
+
       {% endfor %} {% endif %}
     </ul>
 

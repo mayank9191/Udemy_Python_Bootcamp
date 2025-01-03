@@ -5,6 +5,8 @@
     <title>Add Book</title>
   </head>
   <body>
+    <!-- action defines to filled data go to receive_data route as POST request-->
+    <!-- to get form data we need to give a unique name to each input field -->
     <form action="{{url_for('receive_data')}}" method="POST">
       <label>Book Name</label>
       <input type="text" name="book_name" />
@@ -14,6 +16,5 @@
       <input type="text" name="rating" />
       <button type="submit">Add Book</button>
     </form>
-    <a href="{{url_for('home')}}">Go to Library</a>
   </body>
 </html>
