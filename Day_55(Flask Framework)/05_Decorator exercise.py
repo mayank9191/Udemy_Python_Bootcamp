@@ -3,6 +3,7 @@ def logging_decorator(func):
         print(f"You called {func.__name__}{args}")
         result = func(*args)
         print(f"It returned: {result}")
+        # to make fuctiom behaves as expected
         return result
     return wrapper
 

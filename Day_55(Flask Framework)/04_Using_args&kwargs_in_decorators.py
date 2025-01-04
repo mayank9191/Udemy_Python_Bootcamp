@@ -4,9 +4,10 @@ class User:
         self.name = name
         self.is_logged_in = False
 
+# Decorator to check authentication
+
 
 def auth_decorator(function):
-
     def wrapper(*args, **kwargs):
         if args[0].is_logged_in:
             function(args[0])

@@ -92,7 +92,32 @@ header {
 .info h2 {
   font-size: 3rem;
   font-weight: 700;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  border-right: 2px solid black; /* Cursor effect */
+  animation: typing 6s steps(22, end), blink-caret 1s step-end infinite;
 }
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: black;
+  }
+}
+
 .info h6 {
   font-size: 1.5rem;
   font-weight: 400;
