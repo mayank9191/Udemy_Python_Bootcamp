@@ -53,6 +53,20 @@ def about():
 
 @app.route("/contact")
 def contact():
+    if request.method == "POST":
+        def receive_data():
+            name = request.form["name"]
+            email = request.form["email"]
+            phoneNo = request.form["phoneNo"]
+            message = request.form["message"]
+
+            with SMTP("smtp.gmail.com") as connection:
+                connection.starttls()
+                connection.login(user=emailID, password=password)
+                connection.sendmail(from_addr=emailID, to_addrs=emailID,
+                                    msg=f'''Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phoneNo}\nMessage: {message}''')
+            return redirect("/")
+
     return render_template("contact.html")
 
 

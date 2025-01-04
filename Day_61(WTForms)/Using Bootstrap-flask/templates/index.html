@@ -3,18 +3,19 @@
   <head>
     {% extends "base.html" %} {% block title %}Secrets{% endblock %}
     <style>
-      {% block styling %}
-      .jumbotron{
-          background: grey;
-          padding-bottom: 100px;
-      }
+      {{super()}}
+            {% block styling %}
+            .jumbotron{
+                background: grey;
+                padding-bottom: 100px;
+            }
 
-      .container{
-        padding-top:40px;
-        padding-left: -60px;
-      }
+            .container{
+              padding-top:40px;
+              padding-left: -60px;
+            }
 
-      {% endblock %}
+            {% endblock %}
     </style>
   </head>
   <body>
