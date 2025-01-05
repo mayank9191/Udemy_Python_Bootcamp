@@ -6,7 +6,7 @@ from wtforms import StringField, SubmitField, SelectField, URLField
 from wtforms.validators import DataRequired, URL, Length
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer, Float
+from sqlalchemy import String, Integer, Float, Text
 
 
 app = Flask(__name__)
@@ -21,7 +21,24 @@ class Base(DeclarativeBase):
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///cafes-ratings.db"
 db = SQLAlchemy(model_class=Base)
 
-d
+db.init_app(app)
+
+
+class Cafe_rating(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    cafe_name: Mapped[str] = mapped_column(
+        String(250), nullable=False)
+    location: Mapped[str] = mapped_column(
+        String(250), unique=True, nullable=False)
+    open_time: Mapped[str] = mapped_column(String(250), nullable=False)
+    close_time: Mapped[str] = mapped_column(String(250), nullable=False)
+    coffee: Mapped[str] = mapped_column(Text, nullable=False)
+    wifi: Mapped[str] = mapped_column(Text, nullable=False)
+    power: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+with app.app_context():
+    db.create_all()
 
 
 class CafeForm(FlaskForm):
@@ -58,26 +75,42 @@ def add_cafe():
         cafe_location = form.cafe_location.data
         openT = form.open_time.data
         closeT = form.close_time.data
-        cofeeR = form.coffee_rating.data
+        coffeeR = form.coffee_rating.data
         wifiR = form.wifi_rating.data
-        Socket = form.socket_rating.data
-        with open("cafe-data.csv", "a", encoding="utf-8") as f:
-            f.write(f'''{cafe},{cafe_location},{openT},{
-                closeT},{cofeeR},{wifiR},{Socket}\n''')
-        print("New cafe added successfully!")
-        return redirect("/add")
+        socket = form.socket_rating.data
+
+        with app.app_context():
+            cafe_add = Cafe_rating(cafe_name=cafe, location=cafe_location, open_time=openT,
+                                   close_time=closeT, coffee=coffeeR, wifi=wifiR, power=socket)
+
+            db.session.add(cafe_add)
+            db.session.commit()
+            print("New cafe added successfully!")
+            return redirect("/add")
 
     return render_template('add.html', form=form)
 
 
 @app.route('/cafes')
 def cafes():
-    with open("cafe-data.csv", newline='', encoding='utf-8') as csv_file:
-        csv_data = csv.reader(csv_file, delimiter=',')
-        list_of_rows = []
-        for row in csv_data:
-            list_of_rows.append(row)
-    return render_template('cafes.html', cafes=list_of_rows)
+    with app.app_context():
+        read_ratings = db.session.execute(
+            db.select(Cafe_rating)).scalars().all()
+
+        # print(read_ratings[0].cafe_name)
+
+        return render_template('cafes.html', cafes=read_ratings)
+
+
+@app.route("/delete?id=<id>")
+def delete_entry(id):
+    with app.app_context():
+        to_delete = db.session.execute(
+            db.select(Cafe_rating).where(Cafe_rating.id == id)).scalar()
+        db.session.delete(to_delete)
+        db.session.commit()
+
+        return redirect("/cafes")
 
 
 if __name__ == '__main__':

@@ -20,18 +20,33 @@
               <th scope="col">Coffee</th>
               <th scope="col">Wifi</th>
               <th scope="col">Power</th>
+              <th scope="col">Edit/Delete</th>
             </tr>
           </thead>
           <tbody>
-            {% for item in cafes if item[0]!="Cafe Name" %}
+            {% for item in cafes%}
             <tr>
-              <td>{{item[0]}}</td>
-              <td><a href="{{item[1]}}" target="">Maps Link</a></td>
-              <td>{{item[2]}}</td>
-              <td>{{item[3]}}</td>
-              <td>{{item[4]}}</td>
-              <td>{{item[5]}}</td>
-              <td>{{item[6]}}</td>
+              <td>{{item.cafe_name}}</td>
+              <td><a href="{{item.location}}" target="">Maps Link</a></td>
+              <td>{{item.open_time}}</td>
+              <td>{{item.close_time}}</td>
+              <td>{{item.coffee}}</td>
+              <td>{{item.wifi}}</td>
+              <td>{{item.power}}</td>
+              <td>
+                <a
+                  class="btn btn-success btn-sm"
+                  href="{{url_for('add_cafe')}}"
+                  role="button"
+                  >Edit</a
+                >
+                <a
+                  class="btn btn-danger btn-sm"
+                  href="{{url_for('delete_entry',id=id)}}"
+                  role="button"
+                  >Delete</a
+                >
+              </td>
             </tr>
             {% endfor %}
           </tbody>
