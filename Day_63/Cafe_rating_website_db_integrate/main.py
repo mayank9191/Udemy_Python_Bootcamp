@@ -103,7 +103,7 @@ def cafes():
 
 
 @app.route("/delete?id=<id>")
-def delete_entry(id):
+def delete(id):
     with app.app_context():
         to_delete = db.session.execute(
             db.select(Cafe_rating).where(Cafe_rating.id == id)).scalar()
