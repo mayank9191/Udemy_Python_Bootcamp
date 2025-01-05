@@ -71,10 +71,10 @@ def home():
 def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
-        cafe = form.cafe.data
+        cafe = form.cafe.data.title()
         cafe_location = form.cafe_location.data
-        openT = form.open_time.data
-        closeT = form.close_time.data
+        openT = form.open_time.data.upper()
+        closeT = form.close_time.data.upper()
         coffeeR = form.coffee_rating.data
         wifiR = form.wifi_rating.data
         socket = form.socket_rating.data
