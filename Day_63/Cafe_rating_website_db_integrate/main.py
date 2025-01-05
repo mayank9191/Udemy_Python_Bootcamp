@@ -1,14 +1,27 @@
+import csv
 from flask import Flask, render_template, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, URLField
 from wtforms.validators import DataRequired, URL, Length
-import csv
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import String, Integer, Float
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 bootstrap = Bootstrap5(app)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///cafes-ratings.db"
+db = SQLAlchemy(model_class=Base)
+
+d
 
 
 class CafeForm(FlaskForm):
@@ -48,7 +61,7 @@ def add_cafe():
         cofeeR = form.coffee_rating.data
         wifiR = form.wifi_rating.data
         Socket = form.socket_rating.data
-        with open("Day_62/cafe-data.csv", "a", encoding="utf-8") as f:
+        with open("cafe-data.csv", "a", encoding="utf-8") as f:
             f.write(f'''{cafe},{cafe_location},{openT},{
                 closeT},{cofeeR},{wifiR},{Socket}\n''')
         print("New cafe added successfully!")
@@ -59,7 +72,7 @@ def add_cafe():
 
 @app.route('/cafes')
 def cafes():
-    with open("Day_62/cafe-data.csv", newline='', encoding='utf-8') as csv_file:
+    with open("cafe-data.csv", newline='', encoding='utf-8') as csv_file:
         csv_data = csv.reader(csv_file, delimiter=',')
         list_of_rows = []
         for row in csv_data:

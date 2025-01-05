@@ -47,7 +47,7 @@ with app.app_context():
     db.session.add(new_book)
     db.session.commit()
 
-# Read RECORD
+# Read RECORD (Scalars() used to get many items & Scalar() used to get single item)
 with app.app_context():
     result = db.session.execute(db.select(Book).order_by(Book.title))
     all_books = result.scalars()

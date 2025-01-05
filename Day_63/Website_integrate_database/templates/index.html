@@ -3,6 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <title>Library</title>
+    <style>
+      /* Apply flexbox to list items to align content horizontally */
+      li {
+        display: flex;
+        align-items: center; /* Align items vertically */
+        list-style: none; /* Remove bullet points */
+        margin-bottom: 10px; /* Add spacing between list items */
+      }
+
+      a {
+        margin-left: 10px; /* Add spacing between text and link */
+        text-decoration: none; /* Remove underline from links */
+        color: blue; /* Link color */
+      }
+    </style>
+  </body>
+
   </head>
   <body>
     <h1>My Library</h1>
@@ -12,12 +29,11 @@
       <li><p>Library is empty.</p></li>
       {% else %} {% for i in library:%}
       <li>
-        <span>
-          <p>{{i.title}} - {{i.author}} - {{i.rating}}/10</p>
-          <a href="{{url_for('edit',id=i.id)}}"> Edit Rating </a>
-        </span>
+        <span>{{ i.title }} - {{ i.author }} - {{ i.rating }}/10</span>
+        <a href="{{ url_for('edit', id=i.id) }}">Edit Rating</a>
+        <a href="{{url_for('delete',id=i.id)}}">Delete Book</a>
       </li>
-
+      
       {% endfor %} {% endif %}
     </ul>
 

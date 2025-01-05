@@ -58,16 +58,17 @@ def add():
 
 @app.route("/add", methods=["POST", "GET"])
 def receive_data():
-    book_name = request.form["book_name"]
-    book_author = request.form["book_author"]
-    rating = request.form["rating"]
+    if request.method == "POST":
+        book_name = request.form["book_name"]
+        book_author = request.form["book_author"]
+        rating = request.form["rating"]
 
-    # data added  into form is added into the database
+        # data added  into form is added into the database
 
-    with app.app_context():
-        new_book = Book(title=book_name, author=book_author, rating=rating)
-        db.session.add(new_book)
-        db.session.commit()
+        with app.app_context():
+            new_book = Book(title=book_name, author=book_author, rating=rating)
+            db.session.add(new_book)
+            db.session.commit()
 
     return redirect("/")
 
@@ -82,6 +83,16 @@ def edit(id):
     rating = book_details.rating
 
     return render_template("edit.html", id=id, title=title, rating=rating)
+
+
+@app.route("/delete?id=<id>")
+def delete(id):
+    with app.app_context():
+        book_to_delete = db.session.execute(
+            db.select(Book).where(Book.id == id)).scalar()
+        db.session.delete(book_to_delete)
+        db.session.commit()
+    return redirect("/")
 
 
 @app.route("/edit/<id>", methods=["POST", "GET"])
