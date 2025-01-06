@@ -1,0 +1,51 @@
+{% extends 'base.html' %}{% block title %}My Top 10 Movies{% endblock %} {%
+block content %}
+<div class="container">
+  <h1 class="heading">My Top 10 Movies</h1>
+  <p class="description">These are my all-time favourite movies.</p>
+
+  {% for i in data:%}
+  <div class="card">
+    <div
+      class="front"
+      style="
+        background-image: url({{i.img_url}});
+      "
+    >
+      <p class="large">{{i.ranking}}</p>
+    </div>
+    <div class="back">
+      <div>
+        <div class="title">
+          {{i.title}} <span class="release_date">({{i.year}})</span>
+        </div>
+        <div class="rating">
+          <label>{{i.rating}}</label>
+          <i class="fas fa-star star"></i>
+        </div>
+        <p class="review">{{i.review}}</p>
+        <p class="overview">{{i.description}}</p>
+        <a
+          href="{{url_for('update')}}"
+          class="button"
+          style="text-decoration: none"
+          >Update</a
+        >
+        <a
+          href="{{url_for('delete',id=i.id)}}"
+          class="button delete-button"
+          style="text-decoration: none"
+          >Delete</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="container text-center">
+  <a href="{{url_for('add')}}" class="button" style="text-decoration: none">
+    Add Movie
+  </a>
+</div>
+
+{% endblock %}
