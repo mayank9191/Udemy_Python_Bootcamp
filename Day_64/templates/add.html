@@ -4,4 +4,9 @@ block title %}Add Movie{% endblock %} {% block content %}
   <h1 class="heading">Add a Movie</h1>
   {{render_form(form)}}
 </div>
+<div class="container text-center m-5">
+  <a class="button" style="text-decoration: none" href="{{url_for('home')}}"
+    >Go To My List</a
+  >
+</div>
 {% endblock %}
