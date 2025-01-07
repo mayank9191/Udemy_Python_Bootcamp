@@ -33,7 +33,7 @@ class Movie_add(FlaskForm):
 
 
 class Rating_edit(FlaskForm):
-    new_rating = IntegerField(label="Rank it Out of 10",
+    new_rating = IntegerField(label="Your Rating out of 10 e.g. 7.5",
                               validators=[DataRequired()])
     new_review = StringField(label="Your Review",
                              validators=[DataRequired()])
@@ -74,7 +74,14 @@ with app.app_context():
 def home():
     with app.app_context():
         read_data = db.session.execute(db.select(Movies)).scalars().all()
-
+        rate_list = [i.rating for i in read_data]
+        rate_list.sort(reverse=True)
+        rank = 1
+        for i in rate_list:
+            select = db.session.execute(
+                db.select(Movies).where(Movies.rating == i)).scalar()
+            select.ranking = rank
+            rank += 1
     return render_template("index.html", data=read_data)
 
 
@@ -107,7 +114,7 @@ def edit(id):
         with app.app_context():
             select = db.session.execute(
                 db.select(Movies).where(Movies.id == id)).scalar()
-            select.ranking = form2.new_rating.data
+            select.rating = form2.new_rating.data
             select.review = form2.new_review.data
             db.session.commit()
 
@@ -143,11 +150,10 @@ def update():
 
         db.session.add(new_entry)
         db.session.commit()
+        new = int(db.session.execute(
+            db.select(Movies).where(Movies.title == title)).scalar().id)
 
-        new = db.session.execute(
-            db.select(Movies).where(Movies.title == title)).scalar().id
-
-        return redirect(f"/edit?id={new}")
+        return redirect(f"/edit%3Fid={new}")
 
 
 # @app.route("/music?id=<int:id>")
