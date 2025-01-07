@@ -150,14 +150,14 @@ def update():
         return redirect(f"/edit?id={new}")
 
 
-@app.route("/music?id=<int:id>")
-def music(id):
-    with app.app_context():
-        mu = db.session.execute(
-            db.select(Movies).where(Movies.id == id)).scalar()
-        music_data = BytesIO(mu.music)
-        print("hello")
-        return send_file(music_data, as_attachment=False, mimetype='audio/mpeg')
+# @app.route("/music?id=<int:id>")
+# def music(id):
+#     with app.app_context():
+#         mu = db.session.execute(
+#             db.select(Movies).where(Movies.id == id)).scalar()
+#         music_data = BytesIO(mu.music)
+#         print("hello")
+#         return send_file(music_data, as_attachment=False, mimetype='audio/mpeg')
 
 
 if __name__ == "__main__":
