@@ -132,7 +132,7 @@ def update():
     dict_data = request.args.to_dict()
     img_url = "https://image.tmdb.org/t/p/w500" + dict_data["poster_path"]
     title = dict_data.get("title") or dict_data.get("name")
-    year = dict_data.get("first_air_date") or dict_data.get("release_date").split(
+    year = (dict_data.get("first_air_date") or dict_data.get("release_date")).split(
         "-")[0]
     rating = float(dict_data["vote_average"])
     description = dict_data["overview"]
@@ -143,16 +143,22 @@ def update():
 
         db.session.add(new_entry)
         db.session.commit()
-        return redirect("/add")
+
+        new = db.session.execute(
+            db.select(Movies).where(Movies.title == title)).scalar().id
+
+        return redirect(f"/edit?id={new}")
 
 
-# @app.route("/music?id=<int:id>")
-# def music(id):
-#     with app.app_context():
-#         mu = db.session.execute(
-#             db.select(Movies).where(Movies.id == id)).scalar()
-#         music_data = BytesIO(mu.music)
-#         print("hello")
-#         return send_file(music_data, as_attachment=False, mimetype='audio/mpeg')
+@app.route("/music?id=<int:id>")
+def music(id):
+    with app.app_context():
+        mu = db.session.execute(
+            db.select(Movies).where(Movies.id == id)).scalar()
+        music_data = BytesIO(mu.music)
+        print("hello")
+        return send_file(music_data, as_attachment=False, mimetype='audio/mpeg')
+
+
 if __name__ == "__main__":
     app.run(debug=True)
