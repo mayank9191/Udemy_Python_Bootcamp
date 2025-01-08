@@ -26,7 +26,8 @@ bootstrap = Bootstrap5(app)
 
 
 class Movie_add(FlaskForm):
-    title = StringField(label="Movie Name", validators=[DataRequired()])
+    title = StringField(label="Movie / T.V Show Name",
+                        validators=[DataRequired()])
     # music = FileField(label="Add Music from that movie",
     #                   validators=[DataRequired()])
     submit = SubmitField(label="Add Movie")
