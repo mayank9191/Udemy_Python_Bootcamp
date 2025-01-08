@@ -8,12 +8,14 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float, LargeBinary
 import requests
 from io import BytesIO
-from urllib.parse import urlencode
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 URL = "https://api.themoviedb.org/3/search/multi"
 headers = {
     "accept": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiN2YwZjY1MWY1ZTUyMmM3MzYyMDNlNjFhMmU3N2ZiZiIsIm5iZiI6MTczNjE4NDYzMy43MTQsInN1YiI6IjY3N2MxMzM5MTU1MjFmODNkOTY3MjNjYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.tP-RQjsGKWti5w2O1PGh3NcMYiw-Fhu1tAYYZiV92pU "
+    "Authorization": f"Bearer {os.getenv("API_KEY")}"
 
 }
 
