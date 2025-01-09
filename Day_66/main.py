@@ -39,7 +39,22 @@ with app.app_context():
 
 
 def to_dict(self):
-    return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+    if isinstance(self, list):  # It returns the bool value
+        all_cafes = []
+        for i in self:
+            all_cafes.append({column.name: getattr(i, column.name)
+                              for column in i.__table__.columns})
+
+        if len(all_cafes) == 0:
+            all_cafes.append(
+                {"error": {"Not Found": "Sorry, we don't have a cafe at that location."}})
+
+        return all_cafes
+
+    else:
+        return {column.name: getattr(self, column.name)
+                for column in self.__table__.columns}
 
 
 @app.route("/")
@@ -60,11 +75,84 @@ def random():
 
     return jsonify(cafe=result)
 
+
+@app.route("/all", methods=["GET"])
+def all():
+    with app.app_context():
+        all = db.session.execute(db.select(Cafe)).scalars().all()
+
+    return jsonify(cafe=to_dict(all))
+
+
+@app.route("/search")
+def search():
+    l = request.args.get("loc")
+
+    loc = db.session.execute(db.select(Cafe).where(
+        Cafe.location == l.title())).scalars().all()
+
+    return jsonify(cafe=to_dict(loc))
 # HTTP POST - Create Record
+
+
+@app.route("/add", methods=["POST"])
+def add():
+
+    with app.app_context():
+        new_cafe = Cafe(
+            name=request.form.get("name").title(),
+            map_url=request.form.get("map_url"),
+            img_url=request.form.get("img_url"),
+            location=request.form.get("location").title(),
+            has_sockets=bool(request.form.get("has_sockets")),
+            has_toilet=bool(request.form.get("has_toilet")),
+            has_wifi=bool(request.form.get("has_wifi")),
+            can_take_calls=bool(request.form.get("can_take_calls")),
+            seats=request.form.get("seats"),
+            coffee_price=request.form.get("coffee_price"))
+
+        db.session.add(new_cafe)
+        db.session.commit()
+
+    return jsonify(response={"success": "Successfully added the new cafe."})
 
 # HTTP PUT/PATCH - Update Record
 
+
+@app.route("/update-price/<cafe_id>", methods=["PATCH"])
+def update_price(cafe_id):
+    new_price = request.args.get("new_price")
+    with app.app_context():
+        change = db.session.execute(
+            db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
+        if change == None:
+            return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database"}), 404
+
+        change.coffee_price = new_price
+        db.session.commit()
+
+        return jsonify(success="Successfully updated the price.")
+
+
 # HTTP DELETE - Delete Record
+@app.route("/report-closed/<cafe_id>", methods=["DELETE"])
+def delete_aCafe(cafe_id):
+    api_key = request.args.get("api-key")
+
+    if api_key == "TopSecretAPIKey":
+        with app.app_context():
+            to_delete = db.session.execute(
+                db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
+            if to_delete != None:
+                db.session.delete(to_delete)
+                db.session.commit()
+                return jsonify(success="Successfully Deleted!"), 200
+
+            else:
+                return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."}), 404
+
+    else:
+        return jsonify(error="Sorry, that's not allowed. Make sure you have the correct api_key."), 403
 
 
 if __name__ == '__main__':
