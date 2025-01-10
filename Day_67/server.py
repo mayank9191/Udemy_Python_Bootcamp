@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -8,7 +8,13 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import date
+from smtplib import SMTP
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+emailID = os.getenv("EMAIL")
+password = os.getenv("PASSWORD")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -159,8 +165,22 @@ def about():
 # Contact form
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["POST", "GET"])
 def contact():
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        message = request.form.get("message")
+
+        with SMTP("smtp.gmail.com") as connection:
+            connection.starttls()
+            connection.login(user=emailID, password=password)
+            connection.sendmail(from_addr=emailID, to_addrs=emailID, msg=f'''Subject:New Message\n\nName:{
+                                name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}''')
+            return redirect("/")
+
     return render_template("contact.html")
 
 
