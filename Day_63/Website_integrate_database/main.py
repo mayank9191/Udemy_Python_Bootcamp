@@ -25,7 +25,7 @@ db.init_app(app)
 
 
 class Book(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(
         String(250), unique=True, nullable=False)
     author: Mapped[str] = mapped_column(String(250), nullable=False)

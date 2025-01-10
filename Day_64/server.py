@@ -36,8 +36,8 @@ class Movie_add(FlaskForm):
 
 
 class Rating_edit(FlaskForm):
-    new_rating = IntegerField(label="Your Rating out of 10 e.g. 7.5",
-                              validators=[DataRequired()])
+    new_rating = FloatField(label="Your Rating out of 10 e.g. 7.5",
+                            validators=[DataRequired()])
     new_review = StringField(label="Your Review",
                              validators=[DataRequired()])
 
