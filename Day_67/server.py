@@ -112,6 +112,7 @@ def edit_post(id):
     with app.app_context():
         post = db.session.execute(
             db.select(BlogPost).where(BlogPost.id == id)).scalar()
+    # populate allready filled data from database
     form = PostForm(
         title=post.title,
         subtitle=post.subtitle,
