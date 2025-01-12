@@ -8,8 +8,11 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
 
+# Evoking Login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# Make a Login session
 
 
 @login_manager.user_loader
@@ -66,7 +69,7 @@ def register():
 
         login_user(add_user)
 
-        return redirect(f"/secrets/{name}")
+        return redirect(f"/secrets")
 
     return render_template("register.html")
 
@@ -86,7 +89,7 @@ def login():
 
         if check_password_hash(pwhash=user.password, password=password):
             login_user(user)
-            return redirect(f"/secrets/{user.name}")
+            return redirect(f"/secrets")
 
         else:
             flash("Password incorrect, please try again.")
@@ -95,10 +98,10 @@ def login():
     return render_template("login.html", logged_in=current_user.is_authenticated)
 
 
-@app.route('/secrets/<name>')
+@app.route('/secrets')
 @login_required
-def secrets(name):
-    return render_template("secrets.html", user=name, logged_in=True)
+def secrets():
+    return render_template("secrets.html", user=current_user.name, logged_in=True)
 
 
 @app.route('/logout')

@@ -67,19 +67,17 @@ with app.app_context():
 # Landing Page with all the log posts
 @app.route('/')
 def get_all_posts():
-    with app.app_context():
-        posts = db.session.execute(db.select(BlogPost)).scalars().all()
-        return render_template("index.html", all_posts=posts)
+    posts = db.session.execute(db.select(BlogPost)).scalars().all()
+    return render_template("index.html", all_posts=posts)
 
 # Go to specific post to see whole post
 
 
 @app.route("/show_post?id=<int:post_id>")
 def show_post(post_id):
-    with app.app_context():
-        requested_post = db.session.execute(
-            db.select(BlogPost).where(BlogPost.id == post_id)).scalar()
 
+    requested_post = db.session.execute(
+        db.select(BlogPost).where(BlogPost.id == post_id)).scalar()
     return render_template("post.html", post=requested_post)
 
 # To craete a new post in Blogster
@@ -95,13 +93,12 @@ def add_new_post():
         img_url = form.img.data
         body = form.body.data
 
-        with app.app_context():
-            new_post = BlogPost(title=title, date=date.today().strftime("%B %d, %Y"),
-                                body=body, author=name, img_url=img_url, subtitle=subtitle)
-            db.session.add(new_post)
-            db.session.commit()
+        new_post = BlogPost(title=title, date=date.today().strftime("%B %d, %Y"),
+                            body=body, author=name, img_url=img_url, subtitle=subtitle)
+        db.session.add(new_post)
+        db.session.commit()
 
-            return redirect("/")
+        return redirect("/")
     return render_template("make-post.html", form=form, change=False)
 
 # To edit a post choosen
@@ -109,9 +106,9 @@ def add_new_post():
 
 @app.route("/edit?post_id=<int:id>", methods=["GET", "POST"])
 def edit_post(id):
-    with app.app_context():
-        post = db.session.execute(
-            db.select(BlogPost).where(BlogPost.id == id)).scalar()
+
+    post = db.session.execute(
+        db.select(BlogPost).where(BlogPost.id == id)).scalar()
     # populate allready filled data from database
     form = PostForm(
         title=post.title,
@@ -123,24 +120,15 @@ def edit_post(id):
     )
     # is_string = isinstance()
     if form.validate_on_submit():
-        title = form.title.data
-        subtitle = form.subtitle.data
-        name = form.name.data
-        img_url = form.img.data
-        body = form.body.data
+        post_edit.title = form.title.data
+        post_edit.date = date.today().strftime("%B %d, %Y")
+        post_edit.body = form.body.data
+        post_edit.author = form.name.data
+        post_edit.img_url = form.img.data
+        post_edit.subtitle = form.subtitle.data
+        db.session.commit()
 
-        with app.app_context():
-            post_edit = db.session.execute(
-                db.select(BlogPost).where(BlogPost.id == id)).scalar()
-            post_edit.title = title
-            post_edit.date = date.today().strftime("%B %d, %Y")
-            post_edit.body = body
-            post_edit.author = name
-            post_edit.img_url = img_url
-            post_edit.subtitle = subtitle
-            db.session.commit()
-
-            return redirect(f"/show_post%3Fid={id}")
+        return redirect(f"/show_post%3Fid={id}")
     return render_template("make-post.html", form=form, change=True)
 
 # To delete a post from database
@@ -148,11 +136,10 @@ def edit_post(id):
 
 @app.route("/delete?post_id=<int:id>")
 def delete_post(id):
-    with app.app_context():
-        to_delete = db.session.execute(
-            db.select(BlogPost).where(BlogPost.id == id)).scalar()
-        db.session.delete(to_delete)
-        db.session.commit()
+    to_delete = db.session.execute(
+        db.select(BlogPost).where(BlogPost.id == id)).scalar()
+    db.session.delete(to_delete)
+    db.session.commit()
 
     return redirect("/")
 
