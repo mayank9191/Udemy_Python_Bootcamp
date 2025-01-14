@@ -6,13 +6,14 @@ from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text
+from sqlalchemy import Integer, String, Text, ForeignKey
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import CreatePostForm, LoginForm, RegisterForm
+from forms import CreatePostForm, LoginForm, RegisterForm, CommentForm
 from smtplib import SMTP
 from dotenv import load_dotenv
 from functools import wraps
+from typing import List
 import os
 
 load_dotenv()
@@ -23,7 +24,16 @@ password = os.getenv("PASSWORD")
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
-Bootstrap5(app)
+bootstrap = Bootstrap5(app)
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
+
 # Use local files instead of the default CDN
 app.config['CKEDITOR_SERVE_LOCAL'] = True
 # Ensure the package type matches your CKEditor version
@@ -51,27 +61,49 @@ db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
 
-# CONFIGURE TABLES
-class BlogPost(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(
-        String(250), unique=True, nullable=False)
-    subtitle: Mapped[str] = mapped_column(String(250), nullable=False)
-    date: Mapped[str] = mapped_column(String(250), nullable=False)
-    body: Mapped[str] = mapped_column(Text, nullable=False)
-    author: Mapped[str] = mapped_column(String(250), nullable=False)
-    img_url: Mapped[str] = mapped_column(String(250), nullable=False)
-
-
 # TODO: Create a User table for all your registered users.
 class User(UserMixin, db.Model):
+    __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_name: Mapped[str] = mapped_column(
         String(250), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(
         String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(250), nullable=False)
-    # comment:Mapped[Text] = mapped_column(Text,nullable=False)
+    posts: Mapped["BlogPost"] = relationship(
+        "BlogPost", back_populates="author")
+    comments: Mapped["Comment"] = relationship(
+        "Comment", back_populates="author")
+
+
+# CONFIGURE TABLES
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    author_id: Mapped[int] = mapped_column(
+        db.Integer, db.ForeignKey("users.id"))
+    author: Mapped["User"] = relationship("User", back_populates="posts")
+    title: Mapped[str] = mapped_column(
+        String(250), unique=True, nullable=False)
+    subtitle: Mapped[str] = mapped_column(String(250), nullable=False)
+    date: Mapped[str] = mapped_column(String(250), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+    comments: Mapped["Comment"] = relationship(
+        "Comment", back_populates="parent_post")
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    author_id: Mapped[int] = mapped_column(
+        db.Integer, db.ForeignKey("users.id"))
+    author: Mapped["User"] = relationship("User", back_populates="comments")
+    post_id: Mapped[int] = mapped_column(
+        db.Integer, db.ForeignKey("blog_posts.id"))
+    parent_post: Mapped["BlogPost"] = relationship(
+        "BlogPost", back_populates="comments")
+    text: Mapped[str] = mapped_column(Text, nullable=False)
 
 
 with app.app_context():
@@ -157,15 +189,28 @@ def get_all_posts():
 
 
 # TODO: Allow logged-in users to comment on posts
-@app.route("/post")
+@app.route("/post", methods=["POST", "GET"])
 def show_post():
+    commentform = CommentForm()
     post_id = request.args.get("post_id")
+
+    if commentform.validate_on_submit():
+        comment = commentform.comment.data
+
+        new_comment = Comment(author_id=current_user.id,
+                              post_id=post_id, text=comment)
+        db.session.add(new_comment)
+        db.session.commit()
+        return redirect(url_for("get_all_posts"))
+
     requested_post = db.get_or_404(BlogPost, post_id)
-    return render_template("post.html", post=requested_post, logged_in=current_user.is_authenticated)
+    requested_comment = db.session.execute(
+        db.select(Comment).where(Comment.post_id == post_id)).scalars()
+    return render_template("post.html", post=requested_post, logged_in=current_user, form=commentform, comments=requested_comment)
 
 
 @app.route("/new-post", methods=["GET", "POST"])
-@admin_only
+# @admin_only
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
@@ -174,8 +219,8 @@ def add_new_post():
         img_url = form.img_url.data
         body = form.body.data
 
-        new_post = BlogPost(title=title, subtitle=subtitle, date=date.today().strftime("%B %d, %Y"),
-                            body=body, author=current_user.user_name, img_url=img_url)
+        new_post = BlogPost(title=title, subtitle=subtitle, date=date.today().strftime(
+            format="%B %d, %Y"), body=body, img_url=img_url, author_id=current_user.id)
 
         db.session.add(new_post)
         db.session.commit()
