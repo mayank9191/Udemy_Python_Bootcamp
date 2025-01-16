@@ -39,6 +39,8 @@ def show_post(num):
         return render_template("post.html", title=title, subtitle=subtitle, body=body, img=img)
 
 
+
+
 @app.route("/about")
 def about():
     return render_template("about.html")
