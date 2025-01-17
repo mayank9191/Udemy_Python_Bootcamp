@@ -121,6 +121,11 @@ def admin_only(f):
     return wrapper_function
 
 
+@app.context_processor
+def inject_year():
+    return {'current_year': date.today().year}
+
+
 @app.route('/register', methods=["POST", "GET"])
 def register():
     registerform = RegisterForm()
