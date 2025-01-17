@@ -185,7 +185,7 @@ def logout():
 def get_all_posts():
     result = db.session.execute(db.select(BlogPost))
     posts = result.scalars().all()
-    return render_template("index.html", all_posts=posts, logged_in=current_user.is_authenticated)
+    return render_template("index.html", all_posts=posts, logged_in=current_user.is_authenticated, admin=current_user)
 
 
 # TODO: Allow logged-in users to comment on posts
@@ -201,16 +201,16 @@ def show_post():
                               post_id=post_id, text=comment)
         db.session.add(new_comment)
         db.session.commit()
-        return redirect(url_for("get_all_posts"))
+        return redirect(url_for("show_post", post_id=post_id))
 
     requested_post = db.get_or_404(BlogPost, post_id)
     requested_comment = db.session.execute(
         db.select(Comment).where(Comment.post_id == post_id)).scalars()
-    return render_template("post.html", post=requested_post, logged_in=current_user, form=commentform, comments=requested_comment)
+    return render_template("post.html", post=requested_post, logged_in=current_user.is_authenticated, form=commentform, comments=requested_comment, admin=current_user)
 
 
 @app.route("/new-post", methods=["GET", "POST"])
-# @admin_only
+@admin_only
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
@@ -256,6 +256,11 @@ def edit_post():
 def delete_post():
     post_id = request.args.get("post_id")
     post_to_delete = db.get_or_404(BlogPost, post_id)
+    comments_to_delete = db.session.execute(
+        db.select(Comment).where(Comment.post_id == post_id)).scalars().all()
+
+    for comment in comments_to_delete:
+        db.session.delete(comment)
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_posts'))

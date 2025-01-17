@@ -30,7 +30,9 @@ include "header.html" %}
       <div class="col-md-10 col-lg-8 col-xl-7">
         {{ post.body|safe }}
         <hr />
-        {{render_form(form)}}{{ ckeditor.load() }} {% if logged_in.id == 1:%}
+        {% if logged_in:%} {{render_form(form)}}{{ ckeditor.load() }}{% else %}
+        <h4>Register Now to Add Your Comments!</h4>
+        {% endif %}{% if admin.id == 1:%}
         <div class="d-flex justify-content-end mb-4">
           <a
             class="btn btn-primary float-right"
@@ -40,7 +42,7 @@ include "header.html" %}
         </div>
 
         {% endif %}
-        <h3>Some Comments</h3>
+        <h3 style="margin-top: 50px">Some Comments</h3>
         <div class="comment">
           <ul class="commentList">
             {% for comment in comments:%}
