@@ -4,7 +4,7 @@ import datetime as dt
 from smtplib import *
 import random
 
-load_env()
+load_dotenv()
 email = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
 

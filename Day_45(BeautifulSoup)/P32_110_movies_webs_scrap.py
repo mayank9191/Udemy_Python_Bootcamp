@@ -15,5 +15,5 @@ movie_names = soup.find_all(name="h3", class_="title")
 movie_names.reverse()
 
 for movie in movie_names:
-    with open("Day_45/movies.txt", "a", encoding="utf-8") as f:
+    with open("Day_45(BeautifulSoup)/movies.txt", "a", encoding="utf-8") as f:
         f.write(movie.getText() + "\n")

@@ -24,14 +24,14 @@ driver = webdriver.Chrome(options=chrome_options)
 driver.get(url="https://instagram.com")
 
 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-    (By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[1]/div/label/input'))).send_keys(USER_NAME)
+    (By.XPATH, '/html/body/div[1]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[1]/div/label/input'))).send_keys(USER_NAME)
 
 
 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-    (By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[2]/div/label/input'))).send_keys(PASSWORD)
+    (By.XPATH, '/html/body/div[1]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[2]/div/label/input'))).send_keys(PASSWORD)
 
 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-    (By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[3]/button'))).click()
+    (By.XPATH, '/html/body/div[1]/div/div/div[2]/div/div/div[1]/div[1]/div/section/main/article/div[2]/div[1]/div[2]/div/form/div[1]/div[3]/button'))).click()
 
 # WebDriverWait(driver, 10).until(lambda driver: driver.execute_script(
 #     "return document.readyState") == "complete")
